@@ -21,23 +21,20 @@ import static org.hamcrest.Matchers.contains;
 @SpringBootTest(classes = CustomerClientApplication.class)
 @RunWith(SpringRunner.class)
 @AutoConfigureWireMock(port = 8080)
-public class CustomerClientTest {
+public class CustomerClientWireMockTest {
 
     @Autowired
     private CustomerClient client;
 
-    private void configureDefaultCustomersResponse() {
+    @Test
+    public void getCustomers() throws Exception {
+        String body = "[{\"id\":1,\"first\":\"first\",\"last\":\"last\",\"email\":\"email\"}]";
         stubFor(get(urlEqualTo("/customers"))
                         .willReturn(
                                 aResponse()
-                                        .withBody("[{\"id\":1,\"first\":\"first\",\"last\":\"last\",\"email\":\"email\"}]")
+                                        .withBody(body)
                                         .withStatus(200)
                                         .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)));
-    }
-
-    @Test
-    public void getCustomers() throws Exception {
-        configureDefaultCustomersResponse();
         Collection<Customer> customers = this.client.getCustomers();
         Assert.assertThat(customers, contains(
                 new Customer(1L, "first", "last", "email")));
@@ -45,15 +42,13 @@ public class CustomerClientTest {
 
     @Test
     public void getCustomersById() {
-        configureDefaultCustomersByIdResponse();
+        String body = " {\"id\":1,\"first\":\"first\",\"last\":\"last\",\"email\":\"email\"} ";
+        stubFor(get(urlEqualTo("/customers/1"))
+                .willReturn(aResponse()
+                        .withBody(body)
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)));
         Customer customerById = this.client.getCustomerById(1L);
         Assert.assertThat(customerById, org.hamcrest.Matchers.notNullValue());
     }
 
-    private void configureDefaultCustomersByIdResponse() {
-        stubFor(get(urlEqualTo("/customers/1"))
-                .willReturn(aResponse()
-                        .withBody(" {\"id\":1,\"first\":\"first\",\"last\":\"last\",\"email\":\"email\"} ")
-                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)));
-    }
 }
