@@ -46,6 +46,5 @@ public class CustomerRepositoryTest {
     public void findByIdAfterSaveShouldReturnAValidRecord() throws Exception {
         Customer savedRecord = customerRepository.save(new Customer("first", "last", "e@m.com"));
         Assert.assertThat(customerRepository.findOne(savedRecord.getId()), is(savedRecord));
-
     }
 }
