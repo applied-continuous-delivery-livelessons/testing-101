@@ -1,6 +1,5 @@
 package com.example.customerclient;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.Matchers.contains;
 
 /**
@@ -26,24 +26,34 @@ public class CustomerClientTest {
     @Autowired
     private CustomerClient client;
 
-    private void configureCustomersResponse() {
-        WireMock
-                .stubFor(WireMock.get(WireMock.urlEqualTo("/customers"))
+    private void configureDefaultCustomersResponse() {
+        stubFor(get(urlEqualTo("/customers"))
                         .willReturn(
-                                WireMock
-                                        .aResponse()
+                                aResponse()
                                         .withBody("[{\"id\":1,\"first\":\"first\",\"last\":\"last\",\"email\":\"email\"}]")
                                         .withStatus(200)
                                         .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)));
     }
 
     @Test
-    public void customerClientTest() throws Exception {
-
-        configureCustomersResponse();
+    public void getCustomers() throws Exception {
+        configureDefaultCustomersResponse();
         Collection<Customer> customers = this.client.getCustomers();
         Assert.assertThat(customers, contains(
                 new Customer(1L, "first", "last", "email")));
     }
 
+    @Test
+    public void getCustomersById() {
+        configureDefaultCustomersByIdResponse();
+        Customer customerById = this.client.getCustomerById(1L);
+        Assert.assertThat(customerById, org.hamcrest.Matchers.notNullValue());
+    }
+
+    private void configureDefaultCustomersByIdResponse() {
+        stubFor(get(urlEqualTo("/customers/1"))
+                .willReturn(aResponse()
+                        .withBody(" {\"id\":1,\"first\":\"first\",\"last\":\"last\",\"email\":\"email\"} ")
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)));
+    }
 }

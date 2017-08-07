@@ -36,4 +36,10 @@ public class CustomerClient {
                 responseType)
                 .getBody();
     }
+
+    public Customer getCustomerById(Long l) {
+        return this.restTemplate
+                .exchange("http://localhost:8080/customers/{id}", HttpMethod.GET, null, Customer.class, 1L)
+                .getBody();
+    }
 }
