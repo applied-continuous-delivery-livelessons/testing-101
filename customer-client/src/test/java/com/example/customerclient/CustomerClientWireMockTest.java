@@ -6,11 +6,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.Matchers.contains;
@@ -23,18 +27,20 @@ import static org.hamcrest.Matchers.contains;
 @AutoConfigureWireMock(port = 8080)
 public class CustomerClientWireMockTest {
 
+    private ClassPathResource customerByIdJson = new ClassPathResource("customer-by-id.json");
+    private ClassPathResource customersJson = new ClassPathResource("customers.json");
+
     @Autowired
     private CustomerClient client;
 
     @Test
     public void getCustomers() throws Exception {
-        String body = "[{\"id\":1,\"first\":\"first\",\"last\":\"last\",\"email\":\"email\"}]";
         stubFor(get(urlEqualTo("/customers"))
-                        .willReturn(
-                                aResponse()
-                                        .withBody(body)
-                                        .withStatus(200)
-                                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)));
+                .willReturn(
+                        aResponse()
+                                .withBody(responseAsString(customersJson))
+                                .withStatus(200)
+                                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)));
         Collection<Customer> customers = this.client.getCustomers();
         Assert.assertThat(customers, contains(
                 new Customer(1L, "first", "last", "email")));
@@ -42,13 +48,20 @@ public class CustomerClientWireMockTest {
 
     @Test
     public void getCustomersById() {
-        String body = " {\"id\":1,\"first\":\"first\",\"last\":\"last\",\"email\":\"email\"} ";
         stubFor(get(urlEqualTo("/customers/1"))
                 .willReturn(aResponse()
-                        .withBody(body)
+                        .withBody(responseAsString(customerByIdJson))
                         .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)));
         Customer customerById = this.client.getCustomerById(1L);
         Assert.assertThat(customerById, org.hamcrest.Matchers.notNullValue());
+    }
+
+    private String responseAsString(ClassPathResource customersJson) {
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(customersJson.getInputStream()))) {
+            return buffer.lines().collect(Collectors.joining(System.lineSeparator()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

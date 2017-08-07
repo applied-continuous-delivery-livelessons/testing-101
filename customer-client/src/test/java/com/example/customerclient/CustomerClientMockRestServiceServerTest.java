@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -28,6 +29,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class CustomerClientMockRestServiceServerTest {
 
     private MockRestServiceServer mockRestServiceServer;
+    private ClassPathResource customerByIdJson = new ClassPathResource("customer-by-id.json");
+    private ClassPathResource customersJson = new ClassPathResource("customers.json");
 
     @Autowired
     private CustomerClient client;
@@ -44,13 +47,10 @@ public class CustomerClientMockRestServiceServerTest {
 
     @Test
     public void getCustomers() throws Exception {
-        String body = "[{\"id\":1,\"first\":\"first\",\"last\":\"last\",\"email\":\"email\"}]";
-        System.out.println("body: " + body);
-
         this.mockRestServiceServer
                 .expect(manyTimes(), requestTo("http://localhost:8080/customers"))
                 .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess(body, MediaType.APPLICATION_JSON_UTF8));
+                .andRespond(withSuccess(customersJson, MediaType.APPLICATION_JSON_UTF8));
         Collection<Customer> customers = this.client.getCustomers();
         Assert.assertThat(customers, contains(
                 new Customer(1L, "first", "last", "email")));
@@ -58,14 +58,10 @@ public class CustomerClientMockRestServiceServerTest {
 
     @Test
     public void getCustomerById() {
-        String body = " {\"id\":1,\"first\":\"first\",\"last\":\"last\",\"email\":\"email\"} ";
-
-        System.out.println("body: " + body);
         this.mockRestServiceServer
                 .expect(manyTimes(), requestTo("http://localhost:8080/customers/1"))
                 .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess(body, MediaType.APPLICATION_JSON_UTF8));
-
+                .andRespond(withSuccess(customerByIdJson, MediaType.APPLICATION_JSON_UTF8));
         Customer customerById = this.client.getCustomerById(1L);
         Assert.assertThat(customerById, org.hamcrest.Matchers.notNullValue());
     }
