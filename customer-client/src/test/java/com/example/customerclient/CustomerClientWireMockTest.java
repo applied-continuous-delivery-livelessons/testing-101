@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.contains;
  */
 @SpringBootTest(classes = CustomerClientApplication.class)
 @RunWith(SpringRunner.class)
-@AutoConfigureWireMock(port = 8080)
+@AutoConfigureWireMock
 public class CustomerClientWireMockTest {
 
     private ClassPathResource customerByIdJson = new ClassPathResource("customer-by-id.json");
@@ -57,7 +57,8 @@ public class CustomerClientWireMockTest {
     }
 
     private String responseAsString(ClassPathResource customersJson) {
-        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(customersJson.getInputStream()))) {
+        try (BufferedReader buffer = new BufferedReader(
+                new InputStreamReader(customersJson.getInputStream()))) {
             return buffer.lines().collect(Collectors.joining(System.lineSeparator()));
         } catch (Exception e) {
             throw new RuntimeException(e);

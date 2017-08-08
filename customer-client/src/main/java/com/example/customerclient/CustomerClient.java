@@ -13,9 +13,11 @@ import java.util.Collection;
 public class CustomerClient {
 
     private final RestTemplate restTemplate;
+    private final String host;
 
-    public CustomerClient(RestTemplate rt) {
+    public CustomerClient(RestTemplate rt, String csHost) {
         this.restTemplate = rt;
+        this.host = csHost;
     }
 
     public Collection<Customer> getCustomers() {
@@ -25,7 +27,7 @@ public class CustomerClient {
         };
 
         return restTemplate.exchange(
-                "http://localhost:8080/customers",
+                host + "/customers",
                 HttpMethod.GET,
                 null,
                 responseType)
@@ -34,7 +36,7 @@ public class CustomerClient {
 
     public Customer getCustomerById(Long id) {
         return this.restTemplate
-                .exchange("http://localhost:8080/customers/{id}", HttpMethod.GET, null, Customer.class, id)
+                .exchange(host + "/customers/{id}", HttpMethod.GET, null, Customer.class, id)
                 .getBody();
     }
 }

@@ -54,6 +54,7 @@ public class CustomerClientMockRestServiceServerTest {
         Collection<Customer> customers = this.client.getCustomers();
         Assert.assertThat(customers, contains(
                 new Customer(1L, "first", "last", "email")));
+        this.mockRestServiceServer.verify();
     }
 
     @Test
@@ -64,5 +65,6 @@ public class CustomerClientMockRestServiceServerTest {
                 .andRespond(withSuccess(customerByIdJson, MediaType.APPLICATION_JSON_UTF8));
         Customer customerById = this.client.getCustomerById(1L);
         Assert.assertThat(customerById, org.hamcrest.Matchers.notNullValue());
+        this.mockRestServiceServer.verify();
     }
 }
