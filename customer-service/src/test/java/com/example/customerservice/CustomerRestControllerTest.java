@@ -32,7 +32,6 @@ public class CustomerRestControllerTest {
     private Customer c1 = new Customer(1L, "first", "last", "email@email.com");
     private Customer c2 = new Customer(2L, "first", "last", "email@email.com");
 
-
     @Test
     public void getCustomerByIdShouldReturnCustomer() throws Exception {
 

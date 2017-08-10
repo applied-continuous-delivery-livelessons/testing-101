@@ -3,7 +3,6 @@ package com.example.customerclient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -18,8 +17,7 @@ public class CustomerClientConfiguration {
     }
 
     @Bean
-    CustomerClient customerClient(@Value("${customer-service.host:}") String h) {
-        return new CustomerClient(this.restTemplate(),
-            StringUtils.hasText(h) ? h : "http://localhost:8080");
+    CustomerClient customerClient(@Value("${customer-service.host:http://localhost:8080}") String h) {
+        return new CustomerClient(this.restTemplate(), h);
     }
 }
