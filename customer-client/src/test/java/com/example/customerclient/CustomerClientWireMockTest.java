@@ -1,6 +1,6 @@
 package com.example.customerclient;
 
-import org.junit.Assert;
+import org.assertj.core.api.BDDAssertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.hamcrest.Matchers.contains;
 
 /**
  * @author <a href="josh@joshlong.com">Josh Long</a>
@@ -42,8 +41,7 @@ public class CustomerClientWireMockTest {
                                 .withStatus(200)
                                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)));
         Collection<Customer> customers = this.client.getCustomers();
-        Assert.assertThat(customers, contains(
-                new Customer(1L, "first", "last", "email")));
+        BDDAssertions.then(customers).contains(new Customer(1L, "first", "last", "email"));
     }
 
     @Test
@@ -53,7 +51,7 @@ public class CustomerClientWireMockTest {
                         .withBody(responseAsString(customerByIdJson))
                         .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)));
         Customer customerById = this.client.getCustomerById(1L);
-        Assert.assertThat(customerById, org.hamcrest.Matchers.notNullValue());
+        BDDAssertions.then(customerById).isNotNull();
     }
 
     private String responseAsString(ClassPathResource customersJson) {

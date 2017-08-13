@@ -39,6 +39,8 @@ public class CustomerRestControllerTest {
                 .when(this.customerRepository.findOne(1L))
                 .thenReturn(c1);
 
+        //   BDDMockito.given(this.customerRepository.findOne(1L)).willReturn(c1);
+
         mockMvc.perform(MockMvcRequestBuilders.get("/customers/1"))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
@@ -52,8 +54,9 @@ public class CustomerRestControllerTest {
                 .thenReturn(Arrays.asList(c1, c2));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/customers"))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(MockMvcResultMatchers.jsonPath("@.[0].id").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("@.[0].first").value("first"))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+                .andExpect(MockMvcResultMatchers.jsonPath("@.[0].first").value("first"));
     }
 }

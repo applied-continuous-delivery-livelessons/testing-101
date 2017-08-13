@@ -1,5 +1,6 @@
 package com.example.customerclient;
 
+import org.assertj.core.api.BDDAssertions;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,8 +53,7 @@ public class CustomerClientMockRestServiceServerTest {
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(customersJson, MediaType.APPLICATION_JSON_UTF8));
         Collection<Customer> customers = this.client.getCustomers();
-        Assert.assertThat(customers, contains(
-                new Customer(1L, "first", "last", "email")));
+        BDDAssertions.then(customers).contains(new Customer(1L, "first", "last", "email"));
         this.mockRestServiceServer.verify();
     }
 
@@ -64,7 +64,7 @@ public class CustomerClientMockRestServiceServerTest {
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(customerByIdJson, MediaType.APPLICATION_JSON_UTF8));
         Customer customerById = this.client.getCustomerById(1L);
-        Assert.assertThat(customerById, org.hamcrest.Matchers.notNullValue());
+        BDDAssertions.then(customerById).isNotNull();
         this.mockRestServiceServer.verify();
     }
 }

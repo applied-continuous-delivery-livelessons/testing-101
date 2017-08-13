@@ -1,6 +1,6 @@
 package com.example.customerservice;
 
-import org.junit.Assert;
+import org.assertj.core.api.BDDAssertions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -12,9 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolationException;
-
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * @author <a href="josh@joshlong.com">Josh Long</a>
@@ -28,24 +25,34 @@ public class CustomerRepositoryTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Autowired
+    private TestEntityManager testEntityManager;
+
+    @Autowired
     private CustomerRepository customerRepository;
 
     @Test
+    public void findByIdAfterSaveShouldReturnAValidRecord() throws Exception {
+        Customer entity = new Customer("first", "last", "e@m.com");
+        Customer save = this.testEntityManager.persistFlushFind(entity);
+        BDDAssertions.then(save.getFirst()).isEqualTo(entity.getFirst());
+        BDDAssertions.then(save.getLast()).isEqualTo(entity.getLast());
+        BDDAssertions.then(save.getEmail()).isEqualTo(entity.getEmail());
+        BDDAssertions.then(save.getId()).isNotNull();
+    }
+
+    @Test
     public void saveShouldReturnNewInstanceWithValidId() throws Exception {
-        Customer save = customerRepository.save(
-                new Customer("first", "last", "email@email.com"));
-        Assert.assertThat(save.getId(), notNullValue());
+        Customer entity = new Customer("first", "last", "email@email.com");
+        Customer save = customerRepository.save(entity);
+        BDDAssertions.then(save.getFirst()).isEqualTo(entity.getFirst());
+        BDDAssertions.then(save.getLast()).isEqualTo(entity.getLast());
+        BDDAssertions.then(save.getEmail()).isEqualTo(entity.getEmail());
+        BDDAssertions.then(save.getId()).isNotNull();
     }
 
     @Test
     public void saveWhenEmailInvalidShouldThrowConstraintViolationException() throws Exception {
         expectedException.expect(ConstraintViolationException.class);
         customerRepository.save(new Customer("first", "last", null));
-    }
-
-    @Test
-    public void findByIdAfterSaveShouldReturnAValidRecord() throws Exception {
-        Customer savedRecord = customerRepository.save(new Customer("first", "last", "e@m.com"));
-        Assert.assertThat(customerRepository.findOne(savedRecord.getId()), is(savedRecord));
     }
 }

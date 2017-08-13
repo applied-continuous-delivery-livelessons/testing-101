@@ -1,7 +1,7 @@
 package com.example.customerservice;
 
-import org.hamcrest.Matchers;
-import org.junit.Assert;
+import junit.framework.AssertionFailedError;
+import org.assertj.core.api.BDDAssertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -26,10 +26,18 @@ public class CustomerTest {
     }
 
     @Test
+    public void newInstanceWithProperArguments() {
+        Customer customer = new Customer(1L, "first", "last", "email@email.com");
+        BDDAssertions.then(customer.getEmail()).isEqualTo("email@email.com");
+        BDDAssertions.then(customer.getFirst()).isEqualTo("first");
+        BDDAssertions.then(customer.getLast()).isEqualTo("last");
+    }
+
+    @Test
     public void newInstanceWithNullArgumentsShouldThrowException() throws IllegalArgumentException {
         Set<ConstraintViolation<Customer>> violations =
                 validator.validate(new Customer(null, null, null));
-        Assert.assertThat(violations.size(), Matchers.equalTo(3));
+        BDDAssertions.then(violations.size()).isEqualTo(3);
     }
 
 }
