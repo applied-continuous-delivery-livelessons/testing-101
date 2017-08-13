@@ -11,7 +11,7 @@
   expectation.thrown( SomeException.class )
 - @DataJpaTest && TestEntityManager
 - `MockResstServiceServer` (make sure u use the `RestTemplateBuilder` to create a RrestTemplate)
-- compare and contrast this weith WireMock
+- compare and contrast this with WireMock
 - @JsonTest and @Autowired JacksonTest<VehicleDetails> json
 - Spring REST Docs
 - spies vs mocks
