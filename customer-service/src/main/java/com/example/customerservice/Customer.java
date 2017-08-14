@@ -1,5 +1,6 @@
 package com.example.customerservice;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Email;
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Customer {
 
@@ -22,20 +24,10 @@ public class Customer {
     private Long id;
 
     @NotNull
-    private String first, last;
+    private String firstName, lastName;
 
     @Email
     @NotNull
     private String email;
 
-    public Customer(Long id, String f, String l, String e) {
-        this(f, l, e);
-        this.id = id;
-    }
-
-    public Customer(String first, String last, String email) {
-        this.email = email;
-        this.first = first;
-        this.last = last;
-    }
 }

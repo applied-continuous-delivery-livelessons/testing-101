@@ -1,4 +1,4 @@
-package acd;
+package com.example.customerit;
 
 import org.cloudfoundry.client.CloudFoundryClient;
 import org.cloudfoundry.operations.DefaultCloudFoundryOperations;
@@ -10,18 +10,16 @@ import org.cloudfoundry.reactor.doppler.ReactorDopplerClient;
 import org.cloudfoundry.reactor.tokenprovider.PasswordGrantTokenProvider;
 import org.cloudfoundry.reactor.uaa.ReactorUaaClient;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author <a href="josh@joshlong.com">Josh Long</a>
+ * @author <a href="mailto:josh@joshlong.com">Josh Long</a>
  */
 @Configuration
-public class CloudFoundryClientAutoConfiguration {
+public class CloudFoundryClientConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean
     public ReactorCloudFoundryClient cloudFoundryClient(
             ConnectionContext connectionContext,
             TokenProvider tokenProvider) {
@@ -32,7 +30,6 @@ public class CloudFoundryClientAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public ReactorDopplerClient dopplerClient(ConnectionContext connectionContext,
                                               TokenProvider tokenProvider) {
         return ReactorDopplerClient
@@ -43,7 +40,6 @@ public class CloudFoundryClientAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public DefaultConnectionContext connectionContext(
             @Value("${cf.api}") String apiHost,
             @Value("${cf.skip-ssl-validation:false}") boolean skipSsl) {
@@ -58,7 +54,6 @@ public class CloudFoundryClientAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
     ReactorUaaClient uaaClient(ConnectionContext ctx, TokenProvider tokenProvider) {
         return ReactorUaaClient
                 .builder()
@@ -68,7 +63,6 @@ public class CloudFoundryClientAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public PasswordGrantTokenProvider tokenProvider(
             @Value("${cf.user}") String username, @Value("${cf.password}") String password) {
         return PasswordGrantTokenProvider
@@ -79,7 +73,6 @@ public class CloudFoundryClientAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public DefaultCloudFoundryOperations cloudFoundryOperations(
             CloudFoundryClient cfc,
             ReactorDopplerClient dopplerClient,

@@ -2,12 +2,4 @@
 applications:
 - name: acd-customer-service
   instances: 1
-  path: ./customer-service/target/customer-service-0.0.1-SNAPSHOT.jar
-# - name: acd-customer-client
-#   memory: 1G
-#   instances: 2
-#   host: burnin-77
-#   domain: shared-domain.example.com
-#   path: ./flame/
-#   services:
-#   - redis-burnin-77
+  path: customer-service/target/customer-service-0.0.1-SNAPSHOT.jar

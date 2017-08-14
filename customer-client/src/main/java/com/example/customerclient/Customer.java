@@ -5,12 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @author <a href="josh@joshlong.com">Josh Long</a>
+ * @author <a href="mailto:josh@joshlong.com">Josh Long</a>
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Customer {
-    private long id;
-    private String first, last, email;
+    private String firstName, lastName, email;
+    private Long id;
 }

@@ -26,7 +26,7 @@
 - XTreme Programming
  * https://airbrake.io/blog/sdlc/extreme-programming
 - TDD Basics - there's a great video by [w/ Uncle Bob Martin](https://www.youtube.com/watch?v=qkblc5WRn-U):
-  * 1) you're not allowed to prod code unless it is to make a failing unit test pass
+  * 1) you're not allowed to write prod code unless it is to make a failing unit test pass
   * 2) you're not allowed to write any more of a unit test than is sufficient to fail; and compilation failures are failure  
   * 3) you're not allowed to write any more prod code than is sufficient to pass the one failing unit test
   * these laws will put you into a cycle! you  won't be able to get much of anything done before one of the other laws triggers an interrupt! but you'll get used to it.

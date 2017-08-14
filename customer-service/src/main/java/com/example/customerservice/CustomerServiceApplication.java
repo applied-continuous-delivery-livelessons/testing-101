@@ -11,14 +11,16 @@ import java.util.stream.Stream;
 public class CustomerServiceApplication {
 
     @Bean
-    ApplicationRunner init(CustomerRepository repository) {
-        return args ->
-                Stream.of("a", "b", "c")
-                        .forEach(n -> repository.save(new Customer(n, n, n + "@" + n + ".com")));
+    ApplicationRunner applicationRunner(CustomerRepository customerRepository) {
+        return args -> {
+
+            Stream.of("a", "b", "c")
+                    .forEach(n -> customerRepository.save(new Customer(null, n, n,
+                    n + "@" + n + ".com")));
+        };
     }
 
     public static void main(String[] args) {
         SpringApplication.run(CustomerServiceApplication.class, args);
     }
 }
-

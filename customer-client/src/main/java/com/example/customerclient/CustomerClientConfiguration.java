@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * @author <a href="josh@joshlong.com">Josh Long</a>
+ * @author <a href="mailto:josh@joshlong.com">Josh Long</a>
  */
 @Configuration
 public class CustomerClientConfiguration {
@@ -17,7 +17,9 @@ public class CustomerClientConfiguration {
     }
 
     @Bean
-    CustomerClient customerClient(@Value("${customer-service.host:http://localhost:8080}") String h) {
-        return new CustomerClient(this.restTemplate(), h);
+    CustomerClient client(RestTemplate restTemplate,
+                          @Value("${customer-service.host:http://localhost:8080}") String uri) {
+        return new CustomerClient(restTemplate, uri);
     }
+
 }

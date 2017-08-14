@@ -28,31 +28,48 @@ public class CustomerRepositoryTest {
     private TestEntityManager testEntityManager;
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private CustomerRepository repository;
 
     @Test
-    public void findByIdAfterSaveShouldReturnAValidRecord() throws Exception {
-        Customer entity = new Customer("first", "last", "e@m.com");
-        Customer save = this.testEntityManager.persistFlushFind(entity);
-        BDDAssertions.then(save.getFirst()).isEqualTo(entity.getFirst());
-        BDDAssertions.then(save.getLast()).isEqualTo(entity.getLast());
-        BDDAssertions.then(save.getEmail()).isEqualTo(entity.getEmail());
-        BDDAssertions.then(save.getId()).isNotNull();
+    public void saveShouldMapCorrectly() throws Exception {
+        Customer customer = new Customer(null, "first", "last", "email@email.com");
+        Customer saved = this.testEntityManager.persistFlushFind(customer);
+
+        BDDAssertions.then(saved.getId()).isNotNull();
+
+        BDDAssertions.then(saved.getFirstName()).isEqualToIgnoringCase("first");
+        BDDAssertions.then(saved.getFirstName()).isNotBlank();
+
+        BDDAssertions.then(saved.getLastName()).isEqualToIgnoringCase("last");
+        BDDAssertions.then(saved.getLastName()).isNotBlank();
+
+        BDDAssertions.then(saved.getEmail()).isEqualToIgnoringCase("email@email.com");
+        BDDAssertions.then(saved.getLastName()).isNotBlank();
+
     }
 
     @Test
-    public void saveShouldReturnNewInstanceWithValidId() throws Exception {
-        Customer entity = new Customer("first", "last", "email@email.com");
-        Customer save = customerRepository.save(entity);
-        BDDAssertions.then(save.getFirst()).isEqualTo(entity.getFirst());
-        BDDAssertions.then(save.getLast()).isEqualTo(entity.getLast());
-        BDDAssertions.then(save.getEmail()).isEqualTo(entity.getEmail());
-        BDDAssertions.then(save.getId()).isNotNull();
+    public void repositorySaveShouldMapCorrectly() {
+
+        Customer customer = new Customer(null, "first", "last", "email@email.com");
+        Customer saved = this.repository.save(customer);
+
+        BDDAssertions.then(saved.getId()).isNotNull();
+
+        BDDAssertions.then(saved.getFirstName()).isEqualToIgnoringCase("first");
+        BDDAssertions.then(saved.getFirstName()).isNotBlank();
+
+        BDDAssertions.then(saved.getLastName()).isEqualToIgnoringCase("last");
+        BDDAssertions.then(saved.getLastName()).isNotBlank();
+
+        BDDAssertions.then(saved.getEmail()).isEqualToIgnoringCase("email@email.com");
+        BDDAssertions.then(saved.getLastName()).isNotBlank();
     }
 
     @Test
-    public void saveWhenEmailInvalidShouldThrowConstraintViolationException() throws Exception {
-        expectedException.expect(ConstraintViolationException.class);
-        customerRepository.save(new Customer("first", "last", null));
+    public void newInstanceWithInvalidParametersShouldResultInConstraintViolations() throws Exception {
+        this.expectedException.expect(ConstraintViolationException.class);
+        this.repository.save(new Customer(null, null, null, null));
     }
+
 }

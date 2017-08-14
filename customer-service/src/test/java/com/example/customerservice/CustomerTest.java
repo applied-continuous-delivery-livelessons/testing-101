@@ -1,6 +1,5 @@
 package com.example.customerservice;
 
-import junit.framework.AssertionFailedError;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,26 +17,26 @@ public class CustomerTest {
     private Validator validator;
 
     @Before
-    public void setUp() throws Exception {
-        LocalValidatorFactoryBean localValidatorFactoryBean =
-                new LocalValidatorFactoryBean();
+    public void before() throws Throwable {
+        LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
         localValidatorFactoryBean.afterPropertiesSet();
         this.validator = localValidatorFactoryBean.getValidator();
     }
 
     @Test
-    public void newInstanceWithProperArguments() {
+    public void newInstanceWithValidValuesShouldReturnARecord() {
         Customer customer = new Customer(1L, "first", "last", "email@email.com");
-        BDDAssertions.then(customer.getEmail()).isEqualTo("email@email.com");
-        BDDAssertions.then(customer.getFirst()).isEqualTo("first");
-        BDDAssertions.then(customer.getLast()).isEqualTo("last");
+        BDDAssertions.then(customer.getFirstName()).isEqualToIgnoringCase("first");
+        BDDAssertions.then(customer.getLastName()).isEqualToIgnoringCase("last");
+        BDDAssertions.then(customer.getEmail()).isEqualToIgnoringCase("email@email.com");
+        BDDAssertions.then(customer.getId()).isNotNull();
     }
 
     @Test
-    public void newInstanceWithNullArgumentsShouldThrowException() throws IllegalArgumentException {
-        Set<ConstraintViolation<Customer>> violations =
-                validator.validate(new Customer(null, null, null));
-        BDDAssertions.then(violations.size()).isEqualTo(3);
+    public void newInstancecWithInvalidConstraintsShouldProduceConstraintViolations() {
+        Customer customer = new Customer(null, null, null, null);
+        Set<ConstraintViolation<Customer>> constraintViolations = validator.validate(customer);
+        BDDAssertions.then(constraintViolations.size()).isEqualTo(3);
     }
 
 }

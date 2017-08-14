@@ -1,6 +1,6 @@
 {
   "id": 1,
-  "first": "first",
-  "last": "last",
+  "firstName": "first",
+  "lastName": "last",
   "email": "email"
 }
